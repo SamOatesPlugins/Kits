@@ -247,7 +247,25 @@ public class Kits extends SamOatesPlugin {
 
                     minutes = (int) (Math.ceil(timeLeft / oneMinute)) + 1;
 
-                    newClaim.timeLeft = hours + " hours, " + minutes + " minutes until available...";
+                    newClaim.timeLeft = "";
+                    if (hours == 1) {
+                        newClaim.timeLeft = hours + " hour";
+                    } else if (hours > 1) {
+                        newClaim.timeLeft = hours + " hours";
+                    }
+                    
+                    if (minutes > 0 && hours > 0) {
+                        newClaim.timeLeft += ", ";
+                    }
+                    
+                    if (minutes == 1) {
+                        newClaim.timeLeft += minutes + " minute";
+                    } else if (minutes > 1) {
+                        newClaim.timeLeft += minutes + " minutes";
+                    }
+                    
+                    newClaim.timeLeft += " until available...";
+                    
                     m_database.freeResult(result);
                     return newClaim;
                 }
