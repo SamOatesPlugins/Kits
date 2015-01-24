@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.samoatesgames.kits.commands.KitCommand;
+import com.samoatesgames.kits.commands.KitSaveCommand;
 import com.samoatesgames.samoatesplugincore.plugin.SamOatesPlugin;
 import java.io.File;
 import java.io.FileReader;
@@ -47,14 +49,26 @@ public class Kits extends SamOatesPlugin {
     @Override
     public void onEnable() {
 
+        super.onEnable();
+        
+        m_commandManager.registerCommandHandler("kit", new KitCommand(this));
+        m_commandManager.registerCommandHandler("savekit", new KitSaveCommand(this));
+        
         createDatabase();
         loadKits();
+        
         this.logInfo("Plugin Enabled");
     }
 
     @Override
     public void setupConfigurationSettings() {
-
+        
+        this.registerSetting("database.host", "localhost");
+        this.registerSetting("database.port", 3306);
+        this.registerSetting("database.database", "my_database");
+        this.registerSetting("database.username", "user");
+        this.registerSetting("database.password", "password");
+        
     }
 
     /**
@@ -163,16 +177,26 @@ public class Kits extends SamOatesPlugin {
      * Create the kits database
      */
     private void createDatabase() {
+        
         m_database = bDatabaseManager.createDatabase(this.getSetting("database.database", "my_database"), this, bDatabaseManager.DatabaseType.SQL);
-        if (!m_database.tableExists("kits_claimed")) {
-            String query = "CREATE TABLE kits_claimed ("
-                    + "uuid VARCHAR(64),"
-                    + "playername VARCHAR(64),"
-                    + "time BIGINT,"
-                    + "kitname VARCHAR(64)"
-                    + ");";
+        if (!m_database.login(
+            this.getSetting("database.host", "localhost"), 
+            this.getSetting("database.username", "user"), 
+            this.getSetting("database.password", "password"), 
+            this.getSetting("database.port", 3306))) 
+        {
+            this.logError("Failed to connect to database!");
+        } else {
+            if (!m_database.tableExists("kits_claimed")) {
+                String query = "CREATE TABLE kits_claimed ("
+                        + "uuid VARCHAR(64),"
+                        + "playername VARCHAR(64),"
+                        + "time BIGINT,"
+                        + "kitname VARCHAR(64)"
+                        + ");";
 
-            m_database.query(query, true);
+                m_database.query(query, true);
+            }
         }
     }
 

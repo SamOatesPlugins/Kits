@@ -70,8 +70,15 @@ public class Kit {
         Material type = Material.getMaterial((String) itemJson.get("material"));
 
         // Amount
-        Long amount = (Long) itemJson.get("amount");
-
+        Integer amount;
+        Object rawAmount = itemJson.get("amount");
+        if (rawAmount instanceof Long) {
+            amount = ((Long)rawAmount).intValue();
+        }
+        else {
+            amount = (Integer)rawAmount;
+        }
+        
         // data
         byte data = 0;
         if (itemJson.containsKey("data")) {
@@ -79,7 +86,7 @@ public class Kit {
         }
 
         // Make the base item from material and amount
-        ItemStack item = new ItemStack(type, amount.intValue(), (short) 0, data);
+        ItemStack item = new ItemStack(type, amount, (short) 0, data);
         ItemMeta meta = item.getItemMeta();
 
         // Name

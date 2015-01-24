@@ -3,3 +3,11 @@ main: com.samoatesgames.kits.Kits
 version: 1.0
 authors: [SamOatesPlugins]
 description: A kit plugin with a built in GUI
+
+commands:
+    kit:
+        description: Access to the kit GUI or claim a specific kit
+        usage: /<command> [kit-name]
+    savekit:
+        description: Save your current inventory as a kit
+        usage: /<command> <kit-name> <timeout-in-minutes>
