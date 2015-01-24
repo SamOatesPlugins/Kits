@@ -1,6 +1,5 @@
-name: GriefPreventionDynmap
-main: com.samoatesgames.griefpreventiondynmap.GriefPreventionDynmap
+name: Kits
+main: com.samoatesgames.kits.Kits
 version: 1.0
 authors: [SamOatesPlugins]
-depend: [ dynmap, GriefPrevention ]
-description: Render GriefPrevention claims on a dynamp.
+description: A kit plugin with a built in GUI
