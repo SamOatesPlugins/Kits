@@ -31,14 +31,14 @@ public class KitCommand extends BasicCommandHandler {
 
     @Override
     public boolean execute(PluginCommandManager manager, CommandSender sender, String[] arguments) {
-        
+
         if (!(sender instanceof Player)) {
             manager.sendMessage(sender, "Only players can use kit commands");
             return true;
         }
 
         final Player player = (Player) sender;
-        
+
         if (arguments.length == 0) {
             handleKitGUI(manager, player);
             return true;
@@ -46,7 +46,7 @@ public class KitCommand extends BasicCommandHandler {
 
         final String kitname = arguments[0].toLowerCase();
         final Map<String, Kit> kits = m_plugin.getKits();
-        
+
         if (!kits.containsKey(kitname)) {
             manager.sendMessage(player, "There is no kit with the name '" + kitname + "'");
             return true;
@@ -63,7 +63,7 @@ public class KitCommand extends BasicCommandHandler {
         m_plugin.giveKit(player, kit);
         return true;
     }
-    
+
     /**
      *
      * @param player
@@ -93,6 +93,10 @@ public class KitCommand extends BasicCommandHandler {
 
             KitClaim claim = m_plugin.canPlayerClaimKit(player, kit);
 
+            if (claim.claimOnce) {
+                continue;
+            }
+            
             if (claim.canClaim) {
                 details[0] = ChatColor.GREEN + "Available";
                 details[1] = ChatColor.GOLD + "Left click to claim kit";

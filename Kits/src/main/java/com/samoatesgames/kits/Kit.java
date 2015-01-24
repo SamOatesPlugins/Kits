@@ -29,7 +29,13 @@ public class Kit {
         m_icon = (Material) loadJsonString(kitJson, "icon", m_icon);
 
         // timeout (minutes)
-        m_timeout = (Double) loadJsonString(kitJson, "timeout-minutes", m_timeout);
+        Object rawTimeout = loadJsonString(kitJson, "timeout-minutes", m_timeout);
+        if (rawTimeout instanceof Double) {
+            m_timeout = (Double) rawTimeout;
+        } else if (rawTimeout instanceof Integer) {
+            m_timeout = ((Integer) rawTimeout).doubleValue();
+        }
+        
 
         // items
         loadItems(kitJson, "items");
@@ -49,7 +55,12 @@ public class Kit {
                 ItemStack item = loadItem(itemJson);
                 int slot = -1;
                 if (itemJson.containsKey("inventory-slot")) {
-                    slot = ((Long) itemJson.get("inventory-slot")).intValue();
+                    Object rawInvSlot = itemJson.get("inventory-slot");
+                    if (rawInvSlot instanceof Long) {
+                        slot = ((Long) rawInvSlot).intValue();
+                    } else if (rawInvSlot instanceof Integer) {
+                        slot = ((Integer) rawInvSlot);
+                    }                    
                 }
                 m_items.put(slot, item);
             } catch (Exception ex) {
@@ -74,15 +85,19 @@ public class Kit {
         Object rawAmount = itemJson.get("amount");
         if (rawAmount instanceof Long) {
             amount = ((Long)rawAmount).intValue();
-        }
-        else {
+        } else {
             amount = (Integer)rawAmount;
         }
         
         // data
         byte data = 0;
         if (itemJson.containsKey("data")) {
-            data = ((Long) itemJson.get("data")).byteValue();
+            Object rawData = itemJson.get("data");
+            if (rawData instanceof Long) {
+                data = ((Long) itemJson.get("data")).byteValue();
+            } else if (rawData instanceof Byte) {
+                data = (Byte) itemJson.get("data");
+            }            
         }
 
         // Make the base item from material and amount

@@ -209,7 +209,7 @@ public class Kits extends SamOatesPlugin {
     public KitClaim canPlayerClaimKit(final Player player, final Kit kit) {
 
         KitClaim newClaim = new KitClaim();
-
+        
         String query = "SELECT * FROM kits_claimed WHERE `uuid`='"
                 + player.getUniqueId().toString() + "' AND `kitname`='"
                 + kit.getName() + "'";
@@ -225,6 +225,12 @@ public class Kits extends SamOatesPlugin {
                 // while we have another result, read in the data
                 while (result.next()) {
 
+                    if (kit.getTimeout() <= 0.0) {
+                        newClaim.claimOnce = true;
+                        m_database.freeResult(result);
+                        return newClaim;
+                    }
+                    
                     long time = result.getLong("time");
                     long timeDiff = currentTime - time;
                     long timeout = (long) (kit.getTimeout() * 60.0 * 1000.0);
@@ -307,14 +313,14 @@ public class Kits extends SamOatesPlugin {
      * @param kitname
      * @param currentTimeMillis
      */
-    public void logKitClaim(Player player, String kitname, long currentTimeMillis) {
+    public void logKitClaim(Player player, Kit kit, long currentTimeMillis) {
 
         String query = "INSERT INTO `kits_claimed` "
                 + "(`uuid`,`playername`,`time`,`kitname`) VALUES ("
                 + "'" + player.getUniqueId().toString() + "',"
                 + "'" + player.getName() + "',"
                 + "'" + currentTimeMillis + "',"
-                + "'" + kitname
+                + "'" + kit.getName()
                 + "');";
 
         m_database.query(query, true);
@@ -351,7 +357,7 @@ public class Kits extends SamOatesPlugin {
         player.updateInventory();
 
         // Add to database
-        this.logKitClaim(player, kit.getName(), System.currentTimeMillis());
+        this.logKitClaim(player, kit, System.currentTimeMillis());
 
         this.sendMessage(player, "You have been given the kit '" + kit.getName() + "'");
 
