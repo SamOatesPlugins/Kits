@@ -100,6 +100,10 @@ public class KitCommand extends BasicCommandHandler {
             if (claim.canClaim) {
                 details[0] = ChatColor.GREEN + "Available";
                 details[1] = ChatColor.GOLD + "Left click to claim kit";
+                
+                if (kit.getTimeout() <= 0.0) {
+                    details[0] += " (Single Use)";
+                }                
             } else {
                 details[0] = ChatColor.RED + claim.timeLeft;
                 details[1] = "";
